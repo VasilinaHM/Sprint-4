@@ -1,4 +1,4 @@
-package praktikum;
+package ru.yandex.praktikum;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;

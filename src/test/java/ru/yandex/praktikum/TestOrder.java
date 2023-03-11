@@ -12,9 +12,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import praktikum.MainPage;
-import praktikum.OrderPage;
-import praktikum.SecondOrderContent;
 
 import java.time.Duration;
 @RunWith(Parameterized.class)
@@ -29,6 +26,7 @@ public class TestOrder {
     private final String rentalPeriod;
     private final String color;
     private final String comment;
+
 
     public TestOrder(String firstName, String lastName, String address, String metroStation, String phone, String orderDate, String rentalPeriod, String color, String comment) {
         this.firstName = firstName;
@@ -69,7 +67,7 @@ public class TestOrder {
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("Button_Button__ra12g")));
 
         //нажать кнопку Заказать верхняя
-        pressButton.clickOrderButton();
+        pressButton.clickOrderButton(By.className("Button_Button__ra12g"));
         //подождать пока появится страница
         new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Content__bmtHS")));
@@ -87,7 +85,46 @@ public class TestOrder {
         //подождать когда кнопка заказать станет кликабельной
         new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.elementToBeClickable(By.xpath("//*/div/div[2]/div[3]/button[2]")));
-        //нажать кнопку закать
+        //нажать кнопку заказать
+        driver.findElement(By.xpath("//*/div/div[2]/div[3]/button[2]")).click();
+
+        //подождать когда откроется окно с подтверждением заказа
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Modal__YZ-d3")));
+
+        //найти кнопку Да и кликнуть
+        driver.findElement(By.xpath("//*/div/div[2]/div[5]/div[2]/button[2]")).click();
+
+        //подождать когда откроется окно с заказ оформлен
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_ModalHeader__3FDaJ")));
+    }
+
+    @Test
+    public void orderScooterSecondButton() {
+        MainPage pressButton = new MainPage(driver);
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Header_Header__214zg")));
+        //скролл и нажать кнопку Заказать нижняя
+        pressButton.clickOrderButton(By.xpath("/html/body/div/div/div[1]/div[4]/div[2]/div[5]/button"));
+        //подождать пока появится страница
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Content__bmtHS")));
+
+        OrderPage objOrderPage = new OrderPage(driver);
+        // заполнили 1 форму заказа
+        objOrderPage.newOrderPage(firstName, lastName, address, metroStation, phone);
+
+        // подождать пока появиться страница Про аренду
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Header__BZXOb")));
+
+        SecondOrderContent objSecondOrderContent = new SecondOrderContent(driver);
+        objSecondOrderContent.finishOrderPage(orderDate, rentalPeriod, color, comment);
+        //подождать когда кнопка заказать станет кликабельной
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.elementToBeClickable(By.xpath("//*/div/div[2]/div[3]/button[2]")));
+        //нажать кнопку заказать
         driver.findElement(By.xpath("//*/div/div[2]/div[3]/button[2]")).click();
 
         //подождать когда откроется окно с подтверждением заказа
@@ -107,4 +144,5 @@ public class TestOrder {
         driver.quit();
     }
 }
+
 
