@@ -26,9 +26,11 @@ public class TestOrder {
     private final String rentalPeriod;
     private final String color;
     private final String comment;
+    private final String buttonPath;
 
 
-    public TestOrder(String firstName, String lastName, String address, String metroStation, String phone, String orderDate, String rentalPeriod, String color, String comment) {
+    public TestOrder(String buttonPath, String firstName, String lastName, String address, String metroStation, String phone, String orderDate, String rentalPeriod, String color, String comment) {
+        this.buttonPath = buttonPath;
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
@@ -55,58 +57,19 @@ public class TestOrder {
     @Parameterized.Parameters
     public static String [][] orderData() {
         return new String[][]{
-                {"Катя", "Ежова", "Вавилова 22", "Планерная", "89998887766", "09.03.2023", "двое суток", "black", "рандомный коммент"},
-                {"Егор", "Самсонов", "Мира 122", "Ростокино", "89993332211", "25.04.2023", "трое суток", "black", "оставить у двери"}
+                {"/html/body/div/div/div/div[1]/div[2]/button[1]","Катя", "Ежова", "Вавилова 22", "Планерная", "89998887766", "09.03.2023", "двое суток", "black", "рандомный коммент"},
+                {"/html/body/div/div/div/div[4]/div[2]/div[5]/button", "Егор", "Самсонов", "Мира 122", "Ростокино", "89993332211", "25.04.2023", "трое суток", "black", "оставить у двери"}
         };
     }
 
     @Test
-    public void orderScooterFirstButton() {
+    public void orderScooterButton() {
         MainPage pressButton = new MainPage(driver);
         new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Button_Button__ra12g")));
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath(buttonPath)));
 
         //нажать кнопку Заказать верхняя
-        pressButton.clickOrderButton(By.className("Button_Button__ra12g"));
-        //подождать пока появится страница
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Content__bmtHS")));
-
-        OrderPage objOrderPage = new OrderPage(driver);
-        // заполнили 1 форму заказа
-        objOrderPage.newOrderPage(firstName, lastName, address, metroStation, phone);
-
-        // подождать пока появиться страница Про аренду
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Header__BZXOb")));
-
-        SecondOrderContent objSecondOrderContent = new SecondOrderContent(driver);
-        objSecondOrderContent.finishOrderPage(orderDate, rentalPeriod, color, comment);
-        //подождать когда кнопка заказать станет кликабельной
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.elementToBeClickable(By.xpath("//*/div/div[2]/div[3]/button[2]")));
-        //нажать кнопку заказать
-        driver.findElement(By.xpath("//*/div/div[2]/div[3]/button[2]")).click();
-
-        //подождать когда откроется окно с подтверждением заказа
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Modal__YZ-d3")));
-
-        //найти кнопку Да и кликнуть
-        driver.findElement(By.xpath("//*/div/div[2]/div[5]/div[2]/button[2]")).click();
-
-        //подождать когда откроется окно с заказ оформлен
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_ModalHeader__3FDaJ")));
-    }
-
-    @Test
-    public void orderScooterSecondButton() {
-        MainPage pressButton = new MainPage(driver);
-        new WebDriverWait(driver, Duration.ofSeconds(5))
-                .until(ExpectedConditions.visibilityOfElementLocated(By.className("Header_Header__214zg")));
-        //скролл и нажать кнопку Заказать нижняя
-        pressButton.clickOrderButton(By.xpath("/html/body/div/div/div[1]/div[4]/div[2]/div[5]/button"));
+        pressButton.clickOrderButton(By.xpath(buttonPath));
         //подождать пока появится страница
         new WebDriverWait(driver, Duration.ofSeconds(5))
                 .until(ExpectedConditions.visibilityOfElementLocated(By.className("Order_Content__bmtHS")));
